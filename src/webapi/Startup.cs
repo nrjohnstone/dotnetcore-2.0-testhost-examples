@@ -4,10 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SimpleInjector;
+using SimpleInjector.Integration.AspNetCore.Mvc;
+using SimpleInjector.Lifestyles;
 
 namespace webapi
 {
@@ -18,6 +22,7 @@ namespace webapi
             Configuration = configuration;
         }
 
+        protected readonly Container Container = new Container();
         public IConfiguration Configuration { get; }
 
         public void Configure(IApplicationBuilder app)
@@ -40,7 +45,19 @@ namespace webapi
         IServiceProvider IStartup.ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            IntegrateSimpleInjector(services);
             return services.BuildServiceProvider();
+        }
+
+        private void IntegrateSimpleInjector(IServiceCollection services)
+        {
+            Container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+            //Container.Options.PropertySelectionBehavior = new MonitoringEventsPropertySelectionBehavior();
+
+            services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(Container));
+
+            services.UseSimpleInjectorAspNetRequestScoping(Container);
         }
     }
 }
