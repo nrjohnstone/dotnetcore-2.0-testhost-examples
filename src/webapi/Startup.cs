@@ -17,10 +17,15 @@ namespace webapi
 {
     public class Startup : IStartup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        //public Startup(IConfiguration configuration)
+        //{
+        //    Configuration = configuration;
+        //}
+
+        //public Startup()
+        //{
+
+        //}
 
         protected readonly Container Container = new Container();
         public IConfiguration Configuration { get; }
