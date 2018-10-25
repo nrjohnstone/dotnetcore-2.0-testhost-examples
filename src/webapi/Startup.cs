@@ -1,50 +1,43 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using SimpleInjector;
 using SimpleInjector.Integration.AspNetCore.Mvc;
 using SimpleInjector.Lifestyles;
+using webapi.Ioc;
 
 namespace webapi
 {
     public class Startup : IStartup
     {
-        //public Startup(IConfiguration configuration)
-        //{
-        //    Configuration = configuration;
-        //}
-
-        //public Startup()
-        //{
-
-        //}
-
         protected readonly Container Container = new Container();
         public IConfiguration Configuration { get; }
 
         public void Configure(IApplicationBuilder app)
         {
+            RegisterDependencies();
+            RegisterOverrides();
+
             IHostingEnvironment env = GetHostingEnvironment(app);
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
             app.UseMvc();
         }
 
-        protected virtual IHostingEnvironment GetHostingEnvironment(IApplicationBuilder app)
+        protected virtual void RegisterOverrides()
+        {            
+        }
+
+        private void RegisterDependencies()
         {
-            return app.ApplicationServices.GetService<IHostingEnvironment>();
+            IocConfiguration.Initialize(Container);
         }
 
         IServiceProvider IStartup.ConfigureServices(IServiceCollection services)
@@ -52,13 +45,19 @@ namespace webapi
             services.AddMvc();
 
             IntegrateSimpleInjector(services);
+
             return services.BuildServiceProvider();
+        }
+
+        // Virtual method here allows integration testing of environment specific logic 
+        protected virtual IHostingEnvironment GetHostingEnvironment(IApplicationBuilder app)
+        {
+            return app.ApplicationServices.GetService<IHostingEnvironment>();
         }
 
         private void IntegrateSimpleInjector(IServiceCollection services)
         {
             Container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-            //Container.Options.PropertySelectionBehavior = new MonitoringEventsPropertySelectionBehavior();
 
             services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(Container));
 

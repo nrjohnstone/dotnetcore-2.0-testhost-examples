@@ -9,11 +9,23 @@ namespace webapi.Controllers
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
+        private readonly IValueRepository _valueRepository;
+
+        public ValuesController(IValueRepository valueRepository)
+        {
+            if (valueRepository == null) throw new ArgumentNullException(nameof(valueRepository));
+
+            _valueRepository = valueRepository;
+        }
+
         // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            string val1 = _valueRepository.Get("1");
+            string val2 = _valueRepository.Get("2");
+
+            return new string[] { val1, val2 };
         }
 
         // GET api/values/5
