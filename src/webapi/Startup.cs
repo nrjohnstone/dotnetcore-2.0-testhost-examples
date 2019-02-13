@@ -1,12 +1,9 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
-using SimpleInjector.Integration.AspNetCore.Mvc;
-using SimpleInjector.Lifestyles;
 using webapi.Ioc;
 
 namespace webapi
@@ -14,12 +11,12 @@ namespace webapi
     public class Startup : IStartup
     {
         protected readonly Container Container = new Container();
-        public IConfiguration Configuration { get; }
 
         public void Configure(IApplicationBuilder app)
         {
-            RegisterDependencies();
-            RegisterOverrides();
+            Settings settings = CreateSettings();
+
+            RegisterDependencies(settings);
 
             IHostingEnvironment env = GetHostingEnvironment(app);
 
@@ -31,37 +28,48 @@ namespace webapi
             app.UseMvc();
         }
 
+        IServiceProvider IStartup.ConfigureServices(IServiceCollection services)
+        {
+            services.AddMvc();
+            
+            services.AddSimpleInjector(Container);
+
+            return services.BuildServiceProvider();
+        }
+
+        protected Settings CreateSettings()
+        {
+            var configurationBuilder = CreateConfigurationBuilder();
+            return new Settings(configurationBuilder);
+        }
+
+        /// <summary>
+        /// Allow test projects to override and extend configuration builder
+        /// by adding extra providers etc...
+        /// </summary>
+        /// <returns></returns>
+        protected virtual IConfigurationBuilder CreateConfigurationBuilder()
+        {
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json");
+
+            return builder;
+        }
+
         protected virtual void RegisterOverrides()
         {            
         }
 
-        private void RegisterDependencies()
+        private void RegisterDependencies(Settings settings)
         {
-            IocConfiguration.Initialize(Container);
-        }
-
-        IServiceProvider IStartup.ConfigureServices(IServiceCollection services)
-        {
-            services.AddMvc();
-
-            IntegrateSimpleInjector(services);
-
-            return services.BuildServiceProvider();
+            IocConfiguration.Initialize(Container, settings);
+            RegisterOverrides();
         }
 
         // Virtual method here allows integration testing of environment specific logic 
         protected virtual IHostingEnvironment GetHostingEnvironment(IApplicationBuilder app)
         {
             return app.ApplicationServices.GetService<IHostingEnvironment>();
-        }
-
-        private void IntegrateSimpleInjector(IServiceCollection services)
-        {
-            Container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-
-            services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(Container));
-
-            services.UseSimpleInjectorAspNetRequestScoping(Container);
         }
     }
 }

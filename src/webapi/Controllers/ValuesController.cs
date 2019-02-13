@@ -10,12 +10,14 @@ namespace webapi.Controllers
     public class ValuesController : Controller
     {
         private readonly IValueRepository _valueRepository;
+        private readonly ISettings _settings;
 
-        public ValuesController(IValueRepository valueRepository)
+        public ValuesController(IValueRepository valueRepository, ISettings settings)
         {
             if (valueRepository == null) throw new ArgumentNullException(nameof(valueRepository));
 
             _valueRepository = valueRepository;
+            _settings = settings;
         }
 
         // GET api/values
@@ -26,6 +28,14 @@ namespace webapi.Controllers
             string val2 = _valueRepository.Get("2");
 
             return new string[] { val1, val2 };
+        }
+        ///api/values/settings/sqlserver/datasource
+        ///
+        [HttpGet]
+        [Route("settings/sqlserver/datasource")]
+        public string GetSqlServerDataSource()
+        {
+            return _settings.DataSource;
         }
 
         // GET api/values/5
