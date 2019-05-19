@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.Configuration;
 using SimpleInjector;
 using WebApi;
 
@@ -14,11 +13,11 @@ namespace webapi.test
     {
         private readonly List<Action<Container>> _customRegistrations = new List<Action<Container>>();
 
-        public List<KeyValuePair<string, string>> Settings;
+        public TestSettings Settings { get; set; }
 
-        public FlexibleTestStartup() : base()
+        public FlexibleTestStartup()
         {
-            Settings = new List<KeyValuePair<string, string>>();
+            Settings = new TestSettings();
         }
 
         public void AddCustomRegistration(Action<Container> iocOverride)
@@ -26,24 +25,17 @@ namespace webapi.test
             _customRegistrations.Add(iocOverride);
         }
 
-        protected override IConfigurationBuilder CreateConfigurationBuilder()
+        protected override ISettings CreateSettings()
         {
-            var builder = new ConfigurationBuilder();
-            builder.AddInMemoryCollection(Settings);
-            return builder;
+            return Settings;
         }
-
+        
         protected override void RegisterOverridesImplementation()
         {
             foreach (var customRegistration in _customRegistrations)
             {
                 customRegistration.Invoke(Container);
             }
-        }
-
-        public void AddSetting(string key, string value)
-        {
-            Settings.Add(new KeyValuePair<string, string>(key,value));
         }
     }
 }

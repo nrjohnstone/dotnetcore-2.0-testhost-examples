@@ -5,13 +5,14 @@ using Xunit;
 
 namespace webapi.test
 {
-    public class ConfigurationBuilderCustomizationTests : FlexbileIntegrationTestBase
+    public class SettingsCustomizationTests : FlexbileIntegrationTestBase
     {
         [Fact]
-        public async void CanOverrideConfigurationSettings()
+        public async void CanOverrideSettings()
         {
             var expectedDataSource = $"Test_{Guid.NewGuid().ToString()}";
-            IntegrationFlexibleTestStartup.AddSetting("SqlServer:DataSource", expectedDataSource);
+
+            IntegrationFlexibleTestStartup.Settings.DataSource = expectedDataSource;
 
             StartServer();
 

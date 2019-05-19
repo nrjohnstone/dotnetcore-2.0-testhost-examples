@@ -14,13 +14,13 @@ namespace WebApi
 
         public void Configure(IApplicationBuilder app)
         {
-            Settings settings = CreateSettings();
+            ISettings settings = CreateSettings();
 
             RegisterDependencies(settings);
             RegisterOverrides();
 
             IHostingEnvironment env = GetHostingEnvironment(app);
-
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -38,26 +38,16 @@ namespace WebApi
             return services.BuildServiceProvider();
         }
 
-        protected Settings CreateSettings()
-        {
-            var configurationBuilder = CreateConfigurationBuilder();
-            return new Settings(configurationBuilder);
-        }
-
         /// <summary>
         /// Test Seam:
-        /// Allow test projects to override and extend configuration builder
-        /// by adding extra providers etc...
+        /// Allow test projects to inject their own settings
         /// </summary>
-        protected virtual IConfigurationBuilder CreateConfigurationBuilder()
+        protected virtual ISettings CreateSettings()
         {
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json");
-
-            return builder;
+            return Settings.Create();
         }
 
-        private void RegisterDependencies(Settings settings)
+        private void RegisterDependencies(ISettings settings)
         {
             IocConfiguration.Initialize(Container, settings);
         }
