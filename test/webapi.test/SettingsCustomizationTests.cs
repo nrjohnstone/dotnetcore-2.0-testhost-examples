@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
 using FluentAssertions;
+using webapi.test.Flexible;
 using Xunit;
 
 namespace webapi.test
 {
+    /// <summary>
+    /// Demonstrate how settings values can be overridden for testing
+    /// </summary>
     public class SettingsCustomizationTests : FlexbileIntegrationTestBase
     {
         [Fact]

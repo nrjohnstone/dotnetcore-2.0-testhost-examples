@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using SimpleInjector;
 using WebApi;
 
-namespace webapi.test
+namespace webapi.test.Flexible
 {
     /// <summary>
     /// This startup Test Double demonstrates how to override the Startup for the WebApi

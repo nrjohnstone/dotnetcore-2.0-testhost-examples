@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace webapi.test
+namespace webapi.test.Flexible
 {
     public class FlexbileIntegrationTestBase
     {

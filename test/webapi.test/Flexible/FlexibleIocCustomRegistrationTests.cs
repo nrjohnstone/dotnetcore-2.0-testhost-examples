@@ -1,20 +1,17 @@
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using WebApi;
 using Xunit;
 
-namespace webapi.test
+namespace webapi.test.Flexible
 {
     /// <summary>
     /// These tests demonstrate that it is possible to inject custom registrations into
-    /// the startup of the webapi
+    /// the startup of the webapi on a per test basis
     /// </summary>
-    public class IocCustomRegistrationTests : FlexbileIntegrationTestBase
+    public class FlexibleIocCustomRegistrationTests : FlexbileIntegrationTestBase
     {
         internal class ValueRepositoryIntegrationTest : IValueRepository
         {
