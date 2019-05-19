@@ -6,22 +6,22 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace webapi.test
 {
-    public class IntegrationTestBase
+    public class FlexbileIntegrationTestBase
     {
         public HttpClient Client { get; set; }
         private TestServer _server;
-        public TestStartup IntegrationTestStartup { get; set; }
+        public FlexibleTestStartup IntegrationFlexibleTestStartup { get; set; }
 
-        public IntegrationTestBase()
+        public FlexbileIntegrationTestBase()
         {
-            IntegrationTestStartup = new TestStartup();
+            IntegrationFlexibleTestStartup = new FlexibleTestStartup();
         }
 
         protected void StartServer()
         {
             var builder = WebHost.CreateDefaultBuilder()
-                .ConfigureServices(services => { services.AddSingleton<IStartup>(IntegrationTestStartup); })
-                .UseSetting(WebHostDefaults.ApplicationKey, typeof(TestStartup).Assembly.FullName);
+                .ConfigureServices(services => { services.AddSingleton<IStartup>(IntegrationFlexibleTestStartup); })
+                .UseSetting(WebHostDefaults.ApplicationKey, typeof(FlexibleTestStartup).Assembly.FullName);
 
             _server = new TestServer(builder);
 

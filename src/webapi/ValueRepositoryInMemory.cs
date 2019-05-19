@@ -1,4 +1,4 @@
-﻿namespace webapi
+﻿namespace WebApi
 {
     internal class ValueRepositoryInMemory : IValueRepository
     {

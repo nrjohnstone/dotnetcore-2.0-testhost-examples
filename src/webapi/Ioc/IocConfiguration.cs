@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SimpleInjector;
+﻿using SimpleInjector;
 
-namespace webapi.Ioc
+namespace WebApi.Ioc
 {
     public static class IocConfiguration 
     {

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using WebApi;
 using Xunit;
 
 namespace webapi.test
@@ -13,7 +14,7 @@ namespace webapi.test
     /// These tests demonstrate that it is possible to inject custom registrations into
     /// the startup of the webapi
     /// </summary>
-    public class IocCustomRegistrationTests : IntegrationTestBase
+    public class IocCustomRegistrationTests : FlexbileIntegrationTestBase
     {
         internal class ValueRepositoryIntegrationTest : IValueRepository
         {
@@ -42,7 +43,7 @@ namespace webapi.test
         [Fact]
         public async Task WhenUsingOverrides_ShouldUseOverrideRegistrations()
         {
-            IntegrationTestStartup.AddCustomRegistration(container => container.Register<IValueRepository, ValueRepositoryIntegrationTest>());
+            IntegrationFlexibleTestStartup.AddCustomRegistration(container => container.Register<IValueRepository, ValueRepositoryIntegrationTest>());
 
             StartServer();
 

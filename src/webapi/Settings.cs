@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Configuration;
 
-namespace webapi
+namespace WebApi
 {
     public class Settings : ISettings
     {

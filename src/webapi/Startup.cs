@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
-using webapi.Ioc;
+using WebApi.Ioc;
 
-namespace webapi
+namespace WebApi
 {
     public class Startup : IStartup
     {
@@ -17,6 +17,7 @@ namespace webapi
             Settings settings = CreateSettings();
 
             RegisterDependencies(settings);
+            RegisterOverrides();
 
             IHostingEnvironment env = GetHostingEnvironment(app);
 
@@ -44,10 +45,10 @@ namespace webapi
         }
 
         /// <summary>
+        /// Test Seam:
         /// Allow test projects to override and extend configuration builder
         /// by adding extra providers etc...
         /// </summary>
-        /// <returns></returns>
         protected virtual IConfigurationBuilder CreateConfigurationBuilder()
         {
             var builder = new ConfigurationBuilder()
@@ -56,17 +57,33 @@ namespace webapi
             return builder;
         }
 
-        protected virtual void RegisterOverrides()
-        {            
-        }
-
         private void RegisterDependencies(Settings settings)
         {
             IocConfiguration.Initialize(Container, settings);
-            RegisterOverrides();
         }
 
-        // Virtual method here allows integration testing of environment specific logic 
+        private void RegisterOverrides()
+        {
+            Container.Options.AllowOverridingRegistrations = true;
+            RegisterOverridesImplementation();
+            Container.Options.AllowOverridingRegistrations = false;
+        }
+
+        /// <summary>
+        /// Test Seam:
+        /// Allow test projects access to the Container directly so
+        /// that test projects can replace existing registrations
+        /// </summary>
+        protected virtual void RegisterOverridesImplementation()
+        {
+
+        }
+
+        /// <summary>
+        /// Test Seam:
+        /// Allow test projects to return IHostingEnvironment for testing
+        /// specific scenarios around Host Environment values
+        /// </summary>
         protected virtual IHostingEnvironment GetHostingEnvironment(IApplicationBuilder app)
         {
             return app.ApplicationServices.GetService<IHostingEnvironment>();

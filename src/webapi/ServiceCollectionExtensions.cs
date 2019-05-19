@@ -4,7 +4,7 @@ using SimpleInjector;
 using SimpleInjector.Integration.AspNetCore.Mvc;
 using SimpleInjector.Lifestyles;
 
-namespace webapi
+namespace WebApi
 {
     internal static class ServiceCollectionExtensions
     {

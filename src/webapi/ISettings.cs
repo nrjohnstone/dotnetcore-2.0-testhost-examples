@@ -1,4 +1,4 @@
-﻿namespace webapi
+﻿namespace WebApi
 {
     public interface ISettings
     {
